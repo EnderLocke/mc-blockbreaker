@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "id": "blockbreaker",
+  "version": "${version}",
+  "name": "BlockBreaker",
+  "description": "Prevents breaking certain Cobblemon blocks like apricorn logs and unripe fruit.",
+  "authors": ["Ender Locke"],
+  "license": "MIT",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "com.ender.blockbreaker.BlockBreakerMod"
+    ]
+  },
+  "depends": {
+    "fabricloader": ">=0.16.0",
+    "minecraft": "1.20.1",
+    "java": ">=21",
+    "fabric": "*"
+  }
+}
