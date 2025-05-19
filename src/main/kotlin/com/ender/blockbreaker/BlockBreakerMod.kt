@@ -12,8 +12,9 @@ import net.minecraft.text.Text
 import net.minecraft.util.Identifier
 import org.slf4j.LoggerFactory
 
-object BlockBreakerMod : ModInitializer {
+class BlockBreakerMod : ModInitializer {
     private val logger = LoggerFactory.getLogger("BlockBreaker")
+    constructor()
 
     override fun onInitialize() {
         logger.info("BlockBreaker is initializing...")
@@ -46,6 +47,7 @@ object BlockBreakerMod : ModInitializer {
             id.contains("apricorn_leaves") -> true
             id.contains("apricorn_log") -> true
             id.contains("apricorn") && !isApricornRipe(state) -> true
+            id.endsWith("_berry_bush") || id.contains("berry_bush") -> true
             else -> false
         }
     }
