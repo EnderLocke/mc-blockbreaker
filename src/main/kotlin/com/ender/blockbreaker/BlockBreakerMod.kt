@@ -1,29 +1,46 @@
 package com.ender.blockbreaker
 
+import com.ender.blockbreaker.command.registerBlockBreakerCommand
+
 import net.fabricmc.api.ModInitializer
-import net.fabricmc.fabric.api.event.player.BlockBreakEvents
+import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents
 import net.minecraft.block.BlockState
 import net.minecraft.registry.Registries
+import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.state.property.IntProperty
 import net.minecraft.text.Text
+import net.minecraft.util.Identifier
+import org.slf4j.LoggerFactory
 
 object BlockBreakerMod : ModInitializer {
-    override fun onInitialize() {
-        println("BlockBreaker initializing...")
+    private val logger = LoggerFactory.getLogger("BlockBreaker")
 
-        BlockBreakEvents.BEFORE.register(BlockBreakEvents.Before { world, pos, state, player ->
-            if (!world.isClient && shouldPreventBreak(state)) {
-                player.sendMessage(Text.literal("You can't break this block!"), true)
-                return@Before false
+    override fun onInitialize() {
+        logger.info("BlockBreaker is initializing...")
+
+        // Register break event handler
+        PlayerBlockBreakEvents.BEFORE.register(PlayerBlockBreakEvents.Before { world, player, pos, state, _ ->
+            if (!BlockBreakerConfig.enabled) return@Before true // Allow breaking if disabled
+
+            if (shouldPreventBreak(state)) {
+                player.sendMessage(Text.literal("You cannot break this block!"), true)
+                return@Before false // Cancel the break
             }
-            true
+
+            true // Allow break
         })
 
-        println("BlockBreaker initialized successfully.")
+        // Register toggle command
+        net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback.EVENT.register { dispatcher, _, _ ->
+            dispatcher.register(registerBlockBreakerCommand())
+        }
+
+        logger.info("BlockBreaker initialized successfully!")
     }
 
-    private fun shouldPreventBreak(state: BlockState): Boolean {
-        val id = Registries.BLOCK.getId(state.block).toString()
+    fun shouldPreventBreak(state: BlockState): Boolean {
+        val block = state.block
+        val id: String = Registries.BLOCK.getId(block).toString()
 
         return when {
             id.contains("apricorn_leaves") -> true
@@ -33,8 +50,10 @@ object BlockBreakerMod : ModInitializer {
         }
     }
 
-    private fun isApricornRipe(state: BlockState): Boolean {
-        val ageProperty = state.properties.find { it.name == "age" } as? IntProperty
-        return ageProperty?.let { state.get(it) == 4 } ?: true
+    fun isApricornRipe(state: BlockState): Boolean {
+        val ageProperty = state.properties.find { it.name == "age" }
+        return ageProperty?.let {
+            state.get(it as IntProperty) == 4
+        } ?: true // If no age property, assume safe
     }
 }
