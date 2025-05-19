@@ -48,6 +48,7 @@ class BlockBreakerMod : ModInitializer {
             id.contains("apricorn_log") -> true
             id.contains("apricorn") && !isApricornRipe(state) -> true
             id.endsWith("_berry_bush") || id.contains("berry_bush") -> true
+            id.contains("healer") || id.endsWith("healing_machine") -> true
             else -> false
         }
     }
