@@ -1,8 +1,18 @@
+import org.gradle.api.file.DuplicatesStrategy
+
 plugins {
     id("maven-publish")
     id("fabric-loom") version "1.10-SNAPSHOT"
     id ("org.jetbrains.kotlin.jvm") version "2.1.0"
 
+}
+
+sourceSets {
+    main {
+        resources {
+            srcDirs("src/main/resources")
+        }
+    }
 }
 
 group = "com.ender.blockbreaker"
@@ -45,3 +55,8 @@ tasks {
         }
     }
 }
+
+tasks.processResources {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
+

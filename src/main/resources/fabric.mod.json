@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "id": "blockbreaker",
-  "version": "${version}",
+  "version": "0.0.1",
   "name": "BlockBreaker",
   "description": "Prevents breaking certain Cobblemon blocks like apricorn logs and unripe fruit.",
   "authors": ["Ender Locke"],
